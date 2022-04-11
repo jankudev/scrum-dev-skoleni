@@ -1,5 +1,19 @@
 [![Build status](https://dev.azure.com/APS-SD-Stewards/APS-SD/_apis/build/status/proscrumdev.battleship-java-CI)](https://dev.azure.com/APS-SD-Stewards/APS-SD/_build/latest?definitionId=15)
 
+# Definition of Done
+criteria
+- simplicity
+- stability
+- usability
+- testability
+- portability
+
+rules
+- rozumne pokryti testy (algoritmy,logika,funkcnost - ne boilerplate)
+- vsechny definovane testy prochazi
+- odevzdatelne uzivateli na hrani
+  - change-log / release notes (pro usera co je noveho)
+
 # Battleship Java
 
 A simple game of Battleship, written in Java.
