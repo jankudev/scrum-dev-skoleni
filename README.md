@@ -16,7 +16,7 @@ rules
 
 # Battleship Java
 
-A simple game of Battleship, written in Java.
+A simple game of Battleship, written in Java code.
 test
 
 # Getting started
