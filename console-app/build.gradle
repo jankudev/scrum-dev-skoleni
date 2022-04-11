@@ -1,0 +1,23 @@
+apply plugin: 'application'
+
+dependencies {
+    implementation project(':game-controller')
+    implementation 'com.diogonunes:JCDP:4.0.2'
+
+    testImplementation 'com.github.stefanbirkner:system-rules:1.19.0'
+}
+
+mainClassName = "org.scrum.psd.battleship.ascii.Main"
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+                'Main-Class': mainClassName
+        )
+    }
+}
+
+run{
+    standardInput = System.in
+}
