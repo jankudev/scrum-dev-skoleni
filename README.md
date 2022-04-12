@@ -74,3 +74,4 @@ git clone https://github.com/proscrumdev/battleship-java.git  --config core.auto
 ```
 
 test
+test
