@@ -60,8 +60,7 @@ public class Main {
         do {
             console.println("");
             console.println("Player, it's your turn");
-            console.println("Enter coordinates for your shot :");
-            Position position = parsePosition(scanner.next());
+            Position position = getInput(scanner);
             printSeparator();
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
@@ -108,6 +107,18 @@ public class Main {
         console.println("");
         console.println("Enemy fleet status:");
         printFleetState(enemyFleet);
+    }
+
+    private static Position getInput(Scanner scanner) {
+        do {
+            try {
+                console.println("Enter coordinates for your shot :");
+                return parsePosition(scanner.next());
+            } catch (Exception e) {
+                console.println(Color.RED.getColoredText("Invalid input"));
+            }
+        }
+        while (true);
     }
 
     private static void printSeparator() {
