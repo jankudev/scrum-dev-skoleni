@@ -15,6 +15,7 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
+
     private static List<Ship> myFleet;
     protected static List<Ship> enemyFleet;
     private static ColoredPrinter console;
@@ -79,6 +80,7 @@ public class Main {
         printCanon();
 
         do {
+            // step: player shoots
             console.println("");
             console.println("Player, it's your turn");
             Position position = getInput(scanner, "Enter coordinates for your shot :");
@@ -95,6 +97,14 @@ public class Main {
             printEnemyFleetState();
             printSeparator();
 
+            // check gameover
+            if (isFleetDestroyed(enemyFleet)) {
+                printPlayerWins();
+                printSeparator();
+                System.exit(0);
+            }
+
+            // step: enemy shoots
             position = getRandomPosition();
             isHit = GameController.checkIsHit(myFleet, position);
             console.println("");
@@ -106,7 +116,34 @@ public class Main {
                 printSeparator();
             }
             console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), GameController.getHitMessage(isHit, false)));
+
+            // check gameover - loose
+            if (isFleetDestroyed(myFleet)) {
+                printPlayerLooses();
+                printSeparator();
+                System.exit(0);
+            }
         } while (true);
+    }
+
+    private static void printPlayerWins() {
+        console.println("");
+        console.println(Color.WHITE.getColoredText("~~~~~~~~~~~~~~~~~~~~~~~~~"));
+        console.print(Color.WHITE.getColoredText("~ "));
+        console.print(Color.GREEN.getColoredText("YOU WIN !!!            "));
+        console.println(Color.WHITE.getColoredText("~"));
+        console.println(Color.WHITE.getColoredText("~~~~~~~~~~~~~~~~~~~~~~~~~"));
+        console.println("");
+    }
+
+    private static void printPlayerLooses() {
+        console.println("");
+        console.println(Color.WHITE.getColoredText("~~~~~~~~~~~~~~~~~~~~~~~~~"));
+        console.print(Color.WHITE.getColoredText("~ "));
+        console.print(Color.RED.getColoredText("YOU LOOSE !!!          "));
+        console.println(Color.WHITE.getColoredText("~"));
+        console.println(Color.WHITE.getColoredText("~~~~~~~~~~~~~~~~~~~~~~~~~"));
+        console.println("");
     }
 
     private static void printEnemyFleetState() {
@@ -220,6 +257,10 @@ public class Main {
 
     private static String formatShipState(Ship ship) {
         return ship.isSunk() ? Color.RED.getColoredText("sunk") : Color.GREEN.getColoredText("still operational");
+    }
+
+    private static boolean isFleetDestroyed(List<Ship> fleet) {
+        return fleet.stream().allMatch(ship -> ship.isSunk());
     }
 
 }

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Random;
 
 public class GameController {
+
+    public static boolean DEBUG = true;
+
     public static boolean checkIsHit(Collection<Ship> ships, Position shot) {
         if (ships == null) {
             throw new IllegalArgumentException("ships is null");

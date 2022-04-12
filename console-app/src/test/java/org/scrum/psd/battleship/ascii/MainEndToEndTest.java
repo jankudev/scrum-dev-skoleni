@@ -5,7 +5,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
+import org.scrum.psd.battleship.controller.dto.Ship;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
