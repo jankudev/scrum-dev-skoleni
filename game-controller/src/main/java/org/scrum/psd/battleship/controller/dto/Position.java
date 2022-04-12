@@ -1,16 +1,15 @@
 package org.scrum.psd.battleship.controller.dto;
 
+import java.util.Objects;
+
 public class Position {
     private Letter column;
     private int row;
 
-    public Position() {
-        super();
-    }
+    private boolean hit; //todo extract to ShipParts
 
     public Position(Letter column, int row) {
-        this();
-
+        Objects.requireNonNull(column);
         this.column = column;
         this.row = row;
     }
@@ -31,17 +30,24 @@ public class Position {
         this.row = row;
     }
 
-    @Override public boolean equals(Object o) {
-        if(o instanceof Position) {
-            Position position = (Position) o;
+    public boolean isHit() {
+        return hit;
+    }
 
-            if(position == null) {
-                return false;
-            }
+    public void setHit(boolean hit) {
+        this.hit = hit;
+    }
 
-            return position.column.equals(column) && position.row == row;
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return row == position.row && column == position.column;
+    }
 
-        return false;
+    @Override
+    public int hashCode() {
+        return Objects.hash(column, row);
     }
 }
