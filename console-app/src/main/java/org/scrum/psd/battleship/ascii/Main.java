@@ -46,16 +46,16 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         console.print("\033[2J\033[;H");
-        console.println("                  __");
-        console.println("                 /  \\");
-        console.println("           .-.  |    |");
-        console.println("   *    _.-'  \\  \\__/");
-        console.println("    \\.-'       \\");
-        console.println("   /          _/");
-        console.println("  |      _  /\" \"");
-        console.println("  |     /_\'");
-        console.println("   \\    \\_/");
-        console.println("    \" \"\" \"\" \"\" \"");
+        console.println(Color.PURPLE.getColoredText("                  __"));
+        console.println(Color.PURPLE.getColoredText("                 /  \\"));
+        console.println(Color.PURPLE.getColoredText("           .-.  |    |"));
+        console.println(Color.PURPLE.getColoredText("   *    _.-'  \\  \\__/"));
+        console.println(Color.PURPLE.getColoredText("    \\.-'       \\"));
+        console.println(Color.PURPLE.getColoredText("   /          _/"));
+        console.println(Color.PURPLE.getColoredText("  |      _  /\" \""));
+        console.println(Color.PURPLE.getColoredText("  |     /_\'"));
+        console.println(Color.PURPLE.getColoredText("   \\    \\_/"));
+        console.println(Color.PURPLE.getColoredText("    \" \"\" \"\" \"\" \""));
 
         do {
             console.println("");
@@ -67,14 +67,14 @@ public class Main {
             if (isHit) {
                 beep();
 
-                console.println("                \\         .  ./");
-                console.println("              \\      .:\" \";'.:..\" \"   /");
-                console.println("                  (M^^.^~~:.'\" \").");
-                console.println("            -   (/  .    . . \\ \\)  -");
-                console.println("               ((| :. ~ ^  :. .|))");
-                console.println("            -   (\\- |  \\ /  |  /)  -");
-                console.println("                 -\\  \\     /  /-");
-                console.println("                   \\  \\   /  /");
+                console.println(Color.RED.getColoredText("                \\         .  ./"));
+                console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
+                console.println(Color.RED.getColoredText("                  (M^^.^~~:.'\" \")."));
+                console.println(Color.RED.getColoredText("            -   (/  .    . . \\ \\)  -"));
+                console.println(Color.RED.getColoredText("               ((| :. ~ ^  :. .|))"));
+                console.println(Color.RED.getColoredText("            -   (\\- |  \\ /  |  /)  -"));
+                console.println(Color.RED.getColoredText("                 -\\  \\     /  /-"));
+                console.println(Color.RED.getColoredText("                   \\  \\   /  /"));
 
                 printEnemyFleetState();
             }
@@ -88,14 +88,14 @@ public class Main {
             if (isHit) {
                 beep();
 
-                console.println("                \\         .  ./");
-                console.println("              \\      .:\" \";'.:..\" \"   /");
-                console.println("                  (M^^.^~~:.'\" \").");
-                console.println("            -   (/  .    . . \\ \\)  -");
-                console.println("               ((| :. ~ ^  :. .|))");
-                console.println("            -   (\\- |  \\ /  |  /)  -");
-                console.println("                 -\\  \\     /  /-");
-                console.println("                   \\  \\   /  /");
+                console.println(Color.RED.getColoredText("                \\         .  ./"));
+                console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
+                console.println(Color.RED.getColoredText("                  (M^^.^~~:.'\" \")."));
+                console.println(Color.RED.getColoredText("            -   (/  .    . . \\ \\)  -"));
+                console.println(Color.RED.getColoredText("               ((| :. ~ ^  :. .|))"));
+                console.println(Color.RED.getColoredText("            -   (\\- |  \\ /  |  /)  -"));
+                console.println(Color.RED.getColoredText("                 -\\  \\     /  /-"));
+                console.println(Color.RED.getColoredText("                   \\  \\   /  /"));
                 printSeparator();
 
                 printEnemyFleetState();
@@ -111,7 +111,7 @@ public class Main {
     }
 
     private static void printSeparator() {
-        console.println(Color.WHITE.getColoredText("----------------------------"));
+        console.println(Color.YELLOW.getColoredText("##################################################"));
     }
 
     private static void beep() {
