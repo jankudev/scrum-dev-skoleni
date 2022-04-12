@@ -34,7 +34,7 @@ public class Ship {
         addPosition(new Position(letter, number));
     }
 
-        public void addPosition(Position position) {
+    public void addPosition(Position position) {
         if (positions == null) {
             positions = new ArrayList<>();
         }
