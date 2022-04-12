@@ -75,6 +75,8 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
+
+                printEnemyFleetState();
             }
 
             console.println(GameController.getHitMessage(isHit, true));
@@ -95,9 +97,17 @@ public class Main {
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
                 printSeparator();
+
+                printEnemyFleetState();
             }
             console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), GameController.getHitMessage(isHit, false)));
         } while (true);
+    }
+
+    private static void printEnemyFleetState() {
+        console.println("");
+        console.println("Enemy fleet status:");
+        printFleetState(enemyFleet);
     }
 
     private static void printSeparator() {
@@ -174,7 +184,7 @@ public class Main {
         enemyFleet.get(4).getPositions().add(new Position(Letter.C, 6));
     }
 
-    private static void printShipsState(List<Ship> fleet) {
+    private static void printFleetState(List<Ship> fleet) {
         for (Ship ship : fleet) {
             console.println("Ship: " + ship.getName() + " - " + formatShipState(ship));
         }
