@@ -8,7 +8,6 @@ public class Ship {
     private String name;
     private int size;
     private List<Position> positions;
-    private Color color;
 
     public Ship() {
         this.positions = new ArrayList<>();
@@ -27,11 +26,6 @@ public class Ship {
         this.positions = positions;
     }
 
-    public Ship(String name, int size, Color color) {
-        this(name, size);
-
-        this.color = color;
-    }
 
     public void addPosition(String input) {
         if (positions == null) {
@@ -70,13 +64,6 @@ public class Ship {
         this.positions = positions;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
 
     public int getSize() {
         return size;
