@@ -166,4 +166,14 @@ public class Main {
         enemyFleet.get(4).getPositions().add(new Position(Letter.C, 5));
         enemyFleet.get(4).getPositions().add(new Position(Letter.C, 6));
     }
+
+    private static void printShipsState(List<Ship> fleet) {
+        for (Ship ship : fleet) {
+            console.println("Ship: " + ship.getName() + " - " + formatShipState(ship));
+        }
+    }
+
+    private static String formatShipState(Ship ship) {
+        return ship.isSunk() ? "sunk" : "alive";
+    }
 }
