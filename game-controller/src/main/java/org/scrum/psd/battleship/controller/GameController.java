@@ -31,13 +31,20 @@ public class GameController {
         return false;
     }
 
+    public static String getHitMessage(boolean isHit, boolean isPlayer) {
+        if (isHit)
+            return Color.RED.getColoredText(isPlayer ? "HIT!" : "HIT your ship !");
+
+        return Color.CYAN.getColoredText("Miss!");
+    }
+
     public static List<Ship> initializeShips() {
         return Arrays.asList(
-                new Ship("Aircraft Carrier", 5, Color.CADET_BLUE),
-                new Ship("Battleship", 4, Color.RED),
-                new Ship("Submarine", 3, Color.CHARTREUSE),
-                new Ship("Destroyer", 3, Color.YELLOW),
-                new Ship("Patrol Boat", 2, Color.ORANGE));
+                new Ship("Aircraft Carrier", 5),
+                new Ship("Battleship", 4),
+                new Ship("Submarine", 3),
+                new Ship("Destroyer", 3),
+                new Ship("Patrol Boat", 2));
     }
 
     public static boolean isShipValid(Ship ship) {
