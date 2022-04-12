@@ -7,6 +7,7 @@ public class Ship {
     private boolean isPlaced;
     private String name;
     private int size;
+
     private List<Position> positions;
 
     public Ship() {
@@ -38,6 +39,19 @@ public class Ship {
         positions.add(new Position(letter, number));
     }
 
+    public boolean isSunk() {
+        return positions.stream().allMatch(x -> x != null && x.isHit());
+    }
+
+    public boolean hit(Position position) {
+        int idx = this.positions.indexOf(position);
+        if (idx >= 0) {
+            this.positions.get(idx).setHit(true);
+            return true;
+        }
+        return false;
+    }
+
     // TODO: property change listener implementieren
 
     public boolean isPlaced() {
@@ -57,7 +71,7 @@ public class Ship {
     }
 
     public List<Position> getPositions() {
-        return positions;
+        return this.positions;
     }
 
     public void setPositions(List<Position> positions) {
