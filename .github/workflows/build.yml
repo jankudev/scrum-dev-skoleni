@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore: [ "**.md" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "**" ]
+    paths-ignore: [ "**.md" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      # Checkout
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Setup
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 8
+          cache: maven
+
+      # Version
+      # TODO this is simplified version, not handling releases atm, ignoring maven etc
+      - name: Get version
+        id: version
+        run: |
+          BASE_VERSION=$(yq e -p=xml '.project.version | sub("-SNAPSHOT", "")' pom.xml)
+          
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            VERSION="$BASE_VERSION"
+          else
+            VERSION="$BASE_VERSION-${GITHUB_REF_NAME//[\/]/-}.${GITHUB_SHA::8}-expire$(date -d "today + 60 minutes" "+%y%m%d%H%M")"
+          fi
+          echo "::set-output name=version::$VERSION"
+
+      # Package
+      - name: Package app
+        run: ./mvnw verify
