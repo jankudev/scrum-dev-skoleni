@@ -2,6 +2,7 @@ package org.scrum.psd.battleship.controller;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
@@ -76,6 +77,22 @@ public class GameControllerTest {
         boolean result = GameController.isShipValid(ship);
 
         Assert.assertTrue(result);
+    }
+
+    @Test
+    public void testInitializingFleet() {
+        List<Ship> ships = GameController.initializeShips();
+        Assertions.assertEquals(5, ships.size());
+    }
+
+    @Test
+    public void testGeneratingFleetPositions() {
+        List<Ship> ships = GameController.initializeShips();
+        GameController.generateShipsRandomPositions(ships, 8, 8);
+        Assertions.assertEquals(
+                ships.stream().mapToLong(x->x.getPositions().size()).sum(),
+                ships.stream().flatMap(x->x.getPositions().stream()).distinct().count(),
+                "All positions should be unique.");
     }
 
 }

@@ -8,16 +8,15 @@ import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class Main {
     private static List<Ship> myFleet;
     protected static List<Ship> enemyFleet;
     private static ColoredPrinter console;
+    private static final int boardWidth = Letter.values().length;
+    private static final int boardHeight = 8;
 
     public static void main(String[] args) {
         console = new ColoredPrinter.Builder(1, false).background(Ansi.BColor.BLACK).foreground(Ansi.FColor.WHITE).build();
@@ -95,7 +94,7 @@ public class Main {
             printEnemyFleetState();
             printSeparator();
 
-            position = getRandomPosition();
+            position = GameController.getRandomPosition(boardWidth, boardHeight);
             isHit = GameController.checkIsHit(myFleet, position);
             console.println("");
 
@@ -145,19 +144,10 @@ public class Main {
         return new Position(letter, number);
     }
 
-    private static Position getRandomPosition() {
-        int rows = 8;
-        int lines = 8;
-        Random random = new Random();
-        Letter letter = Letter.values()[random.nextInt(lines)];
-        int number = random.nextInt(rows);
-        Position position = new Position(letter, number);
-        return position;
-    }
+
 
     private static void InitializeGame() {
         InitializeMyFleet();
-
         InitializeEnemyFleet();
     }
 
@@ -179,42 +169,14 @@ public class Main {
 
     protected static void InitializeEnemyFleet() {
         enemyFleet = GameController.initializeShips();
-
-        for (Ship ship : enemyFleet
-        ) {
-            boolean canBeGenerated = false;
-            do {
-                Position startPoint = getRandomPosition();
-                boolean isVertical = new Random().nextBoolean();
-
-                boolean canContinue = (isVertical && (startPoint.getRow() + ship.getSize()) <= 8) ||
-                        (!isVertical & (startPoint.getColumn().getIndex() + ship.getSize()) <= 8);
-
-                if (canContinue) {
-                    List<Position> ganeratedFields = new ArrayList<>();
-                    if (isVertical) {
-                        for (int i = 0; i < ship.getSize(); i++) {
-                            ganeratedFields.add(new Position(startPoint.getColumn(), startPoint.getRow() + i));
-                        }
-                    } else {
-                        for (int i = 0; i < ship.getSize(); i++) {
-                            ganeratedFields.add(new Position(Letter.getByIndex(startPoint.getColumn().getIndex() + i), startPoint.getRow()));
-                        }
-                    }
-
-                    canBeGenerated = ganeratedFields.stream()
-                            .noneMatch(shipPosition -> enemyFleet.stream().map(Ship::getPositions).collect(Collectors.toList()).contains(shipPosition));
-
-                    if (canBeGenerated)
-                        ship.getPositions().addAll(ganeratedFields);
-                }
-            } while (!canBeGenerated);
-        }
+        GameController.generateShipsRandomPositions(enemyFleet, boardWidth, boardHeight);
     }
+
+
 
     private static void printFleetState(List<Ship> fleet) {
         for (Ship ship : fleet) {
-            console.println("  " + ship.getName() + " (" + ship.getSize()+ ") -> " + formatShipState(ship));
+            console.println("  " + ship.getName() + " (" + ship.getSize() + ") -> " + formatShipState(ship));
         }
     }
 
