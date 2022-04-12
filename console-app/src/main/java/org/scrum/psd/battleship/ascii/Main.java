@@ -3,6 +3,7 @@ package org.scrum.psd.battleship.ascii;
 import com.diogonunes.jcdp.color.ColoredPrinter;
 import com.diogonunes.jcdp.color.api.Ansi;
 import org.scrum.psd.battleship.controller.GameController;
+import org.scrum.psd.battleship.controller.dto.Color;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
@@ -61,6 +62,7 @@ public class Main {
             console.println("Player, it's your turn");
             console.println("Enter coordinates for your shot :");
             Position position = parsePosition(scanner.next());
+            printSeparator();
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
                 beep();
@@ -75,12 +77,12 @@ public class Main {
                 console.println("                   \\  \\   /  /");
             }
 
-            console.println(isHit ? "Yeah ! Nice hit !" : "Miss");
-
+            console.println(GameController.getHitMessage(isHit, true));
+            printSeparator();
             position = getRandomPosition();
             isHit = GameController.checkIsHit(myFleet, position);
             console.println("");
-            console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), isHit ? "hit your ship !" : "miss"));
+
             if (isHit) {
                 beep();
 
@@ -92,9 +94,14 @@ public class Main {
                 console.println("            -   (\\- |  \\ /  |  /)  -");
                 console.println("                 -\\  \\     /  /-");
                 console.println("                   \\  \\   /  /");
-
+                printSeparator();
             }
+            console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), GameController.getHitMessage(isHit, false)));
         } while (true);
+    }
+
+    private static void printSeparator() {
+        console.println(Color.WHITE.getColoredText("----------------------------"));
     }
 
     private static void beep() {
