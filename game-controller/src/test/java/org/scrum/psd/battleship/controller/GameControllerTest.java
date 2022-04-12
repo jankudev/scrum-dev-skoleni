@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShipPart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class GameControllerTest {
             Letter letter = Letter.values()[counter];
 
             for (int i = 0; i < ship.getSize(); i++) {
-                ship.getPositions().add(new Position(letter, i));
+                ship.getShipParts().add(new ShipPart(new Position(letter, i)));
             }
 
             counter++;
@@ -43,7 +44,7 @@ public class GameControllerTest {
             Letter letter = Letter.values()[counter];
 
             for (int i = 0; i < ship.getSize(); i++) {
-                ship.getPositions().add(new Position(letter, i));
+                ship.getShipParts().add(new ShipPart(new Position(letter, i)));
             }
 
             counter++;

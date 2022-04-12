@@ -6,8 +6,6 @@ public class Position {
     private Letter column;
     private int row;
 
-    private boolean hit; //todo extract to ShipParts
-
     public Position(Letter column, int row) {
         Objects.requireNonNull(column);
         this.column = column;
@@ -28,14 +26,6 @@ public class Position {
 
     public void setRow(int row) {
         this.row = row;
-    }
-
-    public boolean isHit() {
-        return hit;
-    }
-
-    public void setHit(boolean hit) {
-        this.hit = hit;
     }
 
     @Override

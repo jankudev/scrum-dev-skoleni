@@ -47,7 +47,7 @@ public class GameController {
     }
 
     public static boolean isShipValid(Ship ship) {
-        return ship.getPositions().size() == ship.getSize();
+        return ship.getShipParts().size() == ship.getSize();
     }
 
     public static Position getRandomPosition(int size) {

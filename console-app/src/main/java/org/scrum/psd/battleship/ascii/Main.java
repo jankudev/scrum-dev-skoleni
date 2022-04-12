@@ -3,10 +3,7 @@ package org.scrum.psd.battleship.ascii;
 import com.diogonunes.jcdp.color.ColoredPrinter;
 import com.diogonunes.jcdp.color.api.Ansi;
 import org.scrum.psd.battleship.controller.GameController;
-import org.scrum.psd.battleship.controller.dto.Color;
-import org.scrum.psd.battleship.controller.dto.Letter;
-import org.scrum.psd.battleship.controller.dto.Position;
-import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,6 +12,7 @@ public class Main {
 
     private static List<Ship> myFleet;
     protected static List<Ship> enemyFleet;
+
     private static ColoredPrinter console;
 
     // set by env property "debug=true" (java -jar xyz.jar -Ddebug=true), used for fast startup
@@ -255,7 +253,7 @@ public class Main {
         DebugFixedPositions fixedPositions = DebugFixedPositions.getDefaultFleetSetupPositions();
         for (Ship ship : fleet) {
             for (int j = 0; j < ship.getSize(); j++) {
-                ship.getPositions().add(fixedPositions.next());
+                ship.addShipPart(fixedPositions.next());
             }
         }
     }
@@ -271,7 +269,7 @@ public class Main {
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
                 Position positionInput = getInput(scanner, String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
-                ship.addPosition(positionInput);
+                ship.addShipPart(positionInput);
             }
         }
     }
@@ -279,8 +277,7 @@ public class Main {
     protected static void InitializeEnemyFleet() {
         enemyFleet = GameController.initializeShips();
 
-        for (Ship ship : enemyFleet
-        ) {
+        for (Ship ship : enemyFleet) {
             boolean canBeGenerated = false;
             do {
                 Position startPoint = getRandomPosition();
@@ -302,10 +299,12 @@ public class Main {
                     }
 
                     canBeGenerated = ganeratedFields.stream()
-                            .noneMatch(shipPosition -> enemyFleet.stream().map(Ship::getPositions).collect(Collectors.toList()).contains(shipPosition));
+                            .noneMatch(shipPosition -> enemyFleet.stream()
+                                    .map(s -> s.getShipParts().stream().map(ShipPart::getPosition).collect(Collectors.toList()))
+                                    .collect(Collectors.toList()).contains(shipPosition));
 
                     if (canBeGenerated)
-                        ship.getPositions().addAll(ganeratedFields);
+                        ship.getShipParts().addAll(ganeratedFields.stream().map(ShipPart::new).collect(Collectors.toList()));
                 }
             } while (!canBeGenerated);
         }
@@ -366,4 +365,8 @@ class DebugFixedPositions {
         Collections.shuffle(positions);
         return new DebugFixedPositions(String.join(" ", positions));
     };
+}
+
+class GridHistory {
+    private List<Position> positions;
 }
