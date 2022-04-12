@@ -21,6 +21,15 @@ public class Main {
         console = new ColoredPrinter.Builder(1, false).background(Ansi.BColor.BLACK).foreground(Ansi.FColor.WHITE).build();
 
         console.setForegroundColor(Ansi.FColor.MAGENTA);
+        printBattleshipLogo();
+        console.setForegroundColor(Ansi.FColor.WHITE);
+
+        InitializeGame();
+
+        StartGame();
+    }
+
+    private static void printBattleshipLogo() {
         console.println("                                     |__");
         console.println("                                     |\\/");
         console.println("                                     ---");
@@ -35,17 +44,9 @@ public class Main {
         console.println("|                        Welcome to Battleship                         BB-61/");
         console.println(" \\_________________________________________________________________________|");
         console.println("");
-        console.setForegroundColor(Ansi.FColor.WHITE);
-
-        InitializeGame();
-
-        StartGame();
     }
 
-    private static void StartGame() {
-        Scanner scanner = new Scanner(System.in);
-
-        console.print("\033[2J\033[;H");
+    private static void printCanon() {
         console.println(Color.PURPLE.getColoredText("                  __"));
         console.println(Color.PURPLE.getColoredText("                 /  \\"));
         console.println(Color.PURPLE.getColoredText("           .-.  |    |"));
@@ -56,6 +57,24 @@ public class Main {
         console.println(Color.PURPLE.getColoredText("  |     /_\'"));
         console.println(Color.PURPLE.getColoredText("   \\    \\_/"));
         console.println(Color.PURPLE.getColoredText("    \" \"\" \"\" \"\" \""));
+    }
+
+    private static void printBang() {
+        console.println(Color.RED.getColoredText("                \\         .  ./"));
+        console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
+        console.println(Color.RED.getColoredText("                  (M^^.^~~:.'\" \")."));
+        console.println(Color.RED.getColoredText("            -   (/  .    . . \\ \\)  -"));
+        console.println(Color.RED.getColoredText("               ((| :. ~ ^  :. .|))"));
+        console.println(Color.RED.getColoredText("            -   (\\- |  \\ /  |  /)  -"));
+        console.println(Color.RED.getColoredText("                 -\\  \\     /  /-"));
+        console.println(Color.RED.getColoredText("                   \\  \\   /  /"));
+    }
+
+    private static void StartGame() {
+        Scanner scanner = new Scanner(System.in);
+
+        console.print("\033[2J\033[;H");
+        printCanon();
 
         do {
             console.println("");
@@ -66,39 +85,24 @@ public class Main {
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
                 beep();
-
-                console.println(Color.RED.getColoredText("                \\         .  ./"));
-                console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
-                console.println(Color.RED.getColoredText("                  (M^^.^~~:.'\" \")."));
-                console.println(Color.RED.getColoredText("            -   (/  .    . . \\ \\)  -"));
-                console.println(Color.RED.getColoredText("               ((| :. ~ ^  :. .|))"));
-                console.println(Color.RED.getColoredText("            -   (\\- |  \\ /  |  /)  -"));
-                console.println(Color.RED.getColoredText("                 -\\  \\     /  /-"));
-                console.println(Color.RED.getColoredText("                   \\  \\   /  /"));
-
-                printEnemyFleetState();
+                printBang();
             }
 
             console.println(GameController.getHitMessage(isHit, true));
             printSeparator();
+
+            printEnemyFleetState();
+            printSeparator();
+
             position = getRandomPosition();
             isHit = GameController.checkIsHit(myFleet, position);
             console.println("");
 
             if (isHit) {
                 beep();
+                printBang();
 
-                console.println(Color.RED.getColoredText("                \\         .  ./"));
-                console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
-                console.println(Color.RED.getColoredText("                  (M^^.^~~:.'\" \")."));
-                console.println(Color.RED.getColoredText("            -   (/  .    . . \\ \\)  -"));
-                console.println(Color.RED.getColoredText("               ((| :. ~ ^  :. .|))"));
-                console.println(Color.RED.getColoredText("            -   (\\- |  \\ /  |  /)  -"));
-                console.println(Color.RED.getColoredText("                 -\\  \\     /  /-"));
-                console.println(Color.RED.getColoredText("                   \\  \\   /  /"));
                 printSeparator();
-
-                printEnemyFleetState();
             }
             console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), GameController.getHitMessage(isHit, false)));
         } while (true);
@@ -106,7 +110,9 @@ public class Main {
 
     private static void printEnemyFleetState() {
         console.println("");
-        console.println("Enemy fleet status:");
+        console.println("");
+        console.println(Color.WHITE.getColoredText("Enemy fleet status:"));
+        console.println("");
         printFleetState(enemyFleet);
     }
 
@@ -186,11 +192,12 @@ public class Main {
 
     private static void printFleetState(List<Ship> fleet) {
         for (Ship ship : fleet) {
-            console.println("Ship: " + ship.getName() + " - " + formatShipState(ship));
+            console.println("  " + ship.getName() + " (" + ship.getSize()+ ") -> " + formatShipState(ship));
         }
     }
 
     private static String formatShipState(Ship ship) {
-        return ship.isSunk() ? "sunk" : "alive";
+        return ship.isSunk() ? Color.RED.getColoredText("sunk") : Color.GREEN.getColoredText("still operational");
     }
+
 }
