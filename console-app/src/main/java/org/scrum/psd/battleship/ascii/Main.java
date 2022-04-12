@@ -19,7 +19,7 @@ public class Main {
 
     // set by env property "debug=true" (java -jar xyz.jar -Ddebug=true), used for fast startup
     private static final boolean debugMode = System.getenv("debug") != null && Boolean.parseBoolean(System.getenv("debug"));
-    private static final DebugFixedPositions debugEnemyShootsOnAllFixedPositions = DebugFixedPositions.getDefaultFleetSetupPositionsAtRandom();
+    private static final DebugFixedPositions debugEnemyShootsOnAllFixedPositions = DebugFixedPositions.getDefaultFleetSetupPositionsAtRandomIncludingMisses();
 
     public static void main(String[] args) {
 
@@ -329,6 +329,7 @@ public class Main {
  */
 class DebugFixedPositions {
     public static final String DEFAULT_FIXED_POSITIONS = "a1 a2 a3 a4 a5 b1 b2 b3 b4 c1 c2 c3 d1 d2 d3 e1 e2";
+    public static final String DEFAULT_MISSES = "a7 b6 c5 e3 h2";
 
     public final List<Position> positions;
     private Iterator<Position> iterator;
@@ -356,6 +357,12 @@ class DebugFixedPositions {
 
     public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandom() {
         List<String> positions = Arrays.asList(DEFAULT_FIXED_POSITIONS.split(" "));
+        Collections.shuffle(positions);
+        return new DebugFixedPositions(String.join(" ", positions));
+    };
+
+    public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandomIncludingMisses() {
+        List<String> positions = Arrays.asList((DEFAULT_FIXED_POSITIONS + " " + DEFAULT_MISSES).split(" "));
         Collections.shuffle(positions);
         return new DebugFixedPositions(String.join(" ", positions));
     };
