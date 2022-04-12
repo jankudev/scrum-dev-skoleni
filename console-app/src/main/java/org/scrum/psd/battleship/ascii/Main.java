@@ -60,8 +60,7 @@ public class Main {
         do {
             console.println("");
             console.println("Player, it's your turn");
-            console.println("Enter coordinates for your shot :");
-            Position position = parsePosition(scanner.next());
+            Position position = getInput(scanner, "Enter coordinates for your shot :");
             printSeparator();
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
@@ -110,6 +109,20 @@ public class Main {
         printFleetState(enemyFleet);
     }
 
+    private static Position getInput(Scanner scanner, String text) {
+        for (int i = 0; i < 10; i++) {
+            String input = scanner.next();
+            try {
+                console.println(text);
+                return parsePosition(input);
+            } catch (Exception e) {
+                console.println(Color.RED.getColoredText("Invalid input: ") + input);
+            }
+        }
+
+        throw new RuntimeException("Max retries reached, exiting");
+    }
+
     private static void printSeparator() {
         console.println(Color.YELLOW.getColoredText("##################################################"));
     }
@@ -150,9 +163,7 @@ public class Main {
             console.println("");
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
-                console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
-
-                String positionInput = scanner.next();
+                Position positionInput = getInput(scanner, String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
                 ship.addPosition(positionInput);
             }
         }
