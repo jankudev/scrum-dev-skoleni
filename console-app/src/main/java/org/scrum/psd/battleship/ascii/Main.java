@@ -110,7 +110,7 @@ public class Main {
     }
 
     private static Position getInput(Scanner scanner, String text) {
-        do {
+        for (int i = 0; i < 10; i++) {
             String input = scanner.next();
             try {
                 console.println(text);
@@ -119,7 +119,8 @@ public class Main {
                 console.println(Color.RED.getColoredText("Invalid input: ") + input);
             }
         }
-        while (true);
+
+        throw new RuntimeException("Max retries reached, exiting");
     }
 
     private static void printSeparator() {
