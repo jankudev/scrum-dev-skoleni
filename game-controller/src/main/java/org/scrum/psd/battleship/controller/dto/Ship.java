@@ -27,7 +27,14 @@ public class Ship {
         this.positions = positions;
     }
 
-    public void addPosition(Position position) {
+    public void addPosition(String input) {
+        Letter letter = Letter.valueOf(input.toUpperCase().substring(0, 1));
+        int number = Integer.parseInt(input.substring(1));
+
+        addPosition(new Position(letter, number));
+    }
+
+        public void addPosition(Position position) {
         if (positions == null) {
             positions = new ArrayList<>();
         }

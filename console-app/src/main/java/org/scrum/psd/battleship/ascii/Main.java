@@ -60,7 +60,7 @@ public class Main {
         do {
             console.println("");
             console.println("Player, it's your turn");
-            Position position = getInput(scanner);
+            Position position = getInput(scanner, "Enter coordinates for your shot :");
             printSeparator();
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
@@ -109,13 +109,14 @@ public class Main {
         printFleetState(enemyFleet);
     }
 
-    private static Position getInput(Scanner scanner) {
+    private static Position getInput(Scanner scanner, String text) {
         do {
+            String input = scanner.next();
             try {
-                console.println("Enter coordinates for your shot :");
-                return parsePosition(scanner.next());
+                console.println(text);
+                return parsePosition(input);
             } catch (Exception e) {
-                console.println(Color.RED.getColoredText("Invalid input"));
+                console.println(Color.RED.getColoredText("Invalid input: ") + input);
             }
         }
         while (true);
@@ -161,9 +162,7 @@ public class Main {
             console.println("");
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
             for (int i = 1; i <= ship.getSize(); i++) {
-                console.println(String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
-
-                String positionInput = scanner.next();
+                Position positionInput = getInput(scanner, String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
                 ship.addPosition(positionInput);
             }
         }
