@@ -8,13 +8,15 @@ import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static List<Ship> myFleet;
-    private static List<Ship> enemyFleet;
+    protected static List<Ship> enemyFleet;
     private static ColoredPrinter console;
 
     public static void main(String[] args) {
@@ -175,30 +177,39 @@ public class Main {
         }
     }
 
-    private static void InitializeEnemyFleet() {
+    protected static void InitializeEnemyFleet() {
         enemyFleet = GameController.initializeShips();
 
-        enemyFleet.get(0).getPositions().add(new Position(Letter.B, 4));
-        enemyFleet.get(0).getPositions().add(new Position(Letter.B, 5));
-        enemyFleet.get(0).getPositions().add(new Position(Letter.B, 6));
-        enemyFleet.get(0).getPositions().add(new Position(Letter.B, 7));
-        enemyFleet.get(0).getPositions().add(new Position(Letter.B, 8));
+        for (Ship ship : enemyFleet
+        ) {
+            boolean canBeGenerated = false;
+            do {
+                Position startPoint = getRandomPosition();
+                boolean isVertical = new Random().nextBoolean();
 
-        enemyFleet.get(1).getPositions().add(new Position(Letter.E, 6));
-        enemyFleet.get(1).getPositions().add(new Position(Letter.E, 7));
-        enemyFleet.get(1).getPositions().add(new Position(Letter.E, 8));
-        enemyFleet.get(1).getPositions().add(new Position(Letter.E, 9));
+                boolean canContinue = (isVertical && (startPoint.getRow() + ship.getSize()) <= 8) ||
+                        (!isVertical & (startPoint.getColumn().getIndex() + ship.getSize()) <= 8);
 
-        enemyFleet.get(2).getPositions().add(new Position(Letter.A, 3));
-        enemyFleet.get(2).getPositions().add(new Position(Letter.B, 3));
-        enemyFleet.get(2).getPositions().add(new Position(Letter.C, 3));
+                if (canContinue) {
+                    List<Position> ganeratedFields = new ArrayList<>();
+                    if (isVertical) {
+                        for (int i = 0; i < ship.getSize(); i++) {
+                            ganeratedFields.add(new Position(startPoint.getColumn(), startPoint.getRow() + i));
+                        }
+                    } else {
+                        for (int i = 0; i < ship.getSize(); i++) {
+                            ganeratedFields.add(new Position(Letter.getByIndex(startPoint.getColumn().getIndex() + i), startPoint.getRow()));
+                        }
+                    }
 
-        enemyFleet.get(3).getPositions().add(new Position(Letter.F, 8));
-        enemyFleet.get(3).getPositions().add(new Position(Letter.G, 8));
-        enemyFleet.get(3).getPositions().add(new Position(Letter.H, 8));
+                    canBeGenerated = ganeratedFields.stream()
+                            .noneMatch(shipPosition -> enemyFleet.stream().map(Ship::getPositions).collect(Collectors.toList()).contains(shipPosition));
 
-        enemyFleet.get(4).getPositions().add(new Position(Letter.C, 5));
-        enemyFleet.get(4).getPositions().add(new Position(Letter.C, 6));
+                    if (canBeGenerated)
+                        ship.getPositions().addAll(ganeratedFields);
+                }
+            } while (!canBeGenerated);
+        }
     }
 
     private static void printFleetState(List<Ship> fleet) {
