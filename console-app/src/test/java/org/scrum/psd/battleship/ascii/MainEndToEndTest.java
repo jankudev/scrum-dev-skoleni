@@ -12,9 +12,7 @@ import org.junit.contrib.java.lang.system.internal.CheckExitCalled;
 import org.scrum.psd.battleship.controller.dto.Ship;
 import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
 
@@ -87,6 +85,30 @@ public class MainEndToEndTest {
         } catch(CheckExitCalled e) {
             Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
             Assert.assertTrue(systemOutRule.getLog().contains("YOU LOOSE !!!"));
+        }
+    }
+
+    @Test
+    public void playGameWithRandomGuessing_untilSomeoneWins() {
+        exit.expectSystemExitWithStatus(0);
+
+        final List<String> positions = new ArrayList<>();
+        for (String s : "abcdefgh".split("")) {
+            for (int i = 1; i<9; i++) {
+                positions.add(s + i);
+            }
+        }
+        Collections.shuffle(positions);
+        final String positionsAsString = String.join(" ",
+                DebugFixedPositions.DEFAULT_FIXED_POSITIONS, String.join(" ", positions));
+
+        try {
+            gameInput.provideLines(positionsAsString.split(" "));
+
+            Main.main(new String[]{});
+        } catch(CheckExitCalled e) {
+            Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
+            Assert.assertTrue(systemOutRule.getLog().contains("YOU LOOSE !!!") || systemOutRule.getLog().contains("YOU WIN THE GAME !!!"));
         }
     }
 }

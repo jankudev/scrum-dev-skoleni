@@ -17,7 +17,6 @@ public class GameGridHistory {
     }
 
     public void markState(Position position, CellState state) {
-        System.out.println("debug - position - " + position.getColumn().name() + position.getRow());
         cells.stream().filter(cell -> cell.position.equals(position)).findFirst().get().state = state;
     }
 
