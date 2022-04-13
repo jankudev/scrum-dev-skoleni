@@ -5,9 +5,14 @@ import org.junit.Test;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShipPart;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class GameControllerTest {
     @Test
@@ -19,7 +24,7 @@ public class GameControllerTest {
             Letter letter = Letter.values()[counter];
 
             for (int i = 0; i < ship.getSize(); i++) {
-                ship.getPositions().add(new Position(letter, i));
+                ship.getShipParts().add(new ShipPart(new Position(letter, i)));
             }
 
             counter++;
@@ -27,7 +32,7 @@ public class GameControllerTest {
 
         boolean result = GameController.checkIsHit(ships, new Position(Letter.A, 1));
 
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
@@ -39,7 +44,7 @@ public class GameControllerTest {
             Letter letter = Letter.values()[counter];
 
             for (int i = 0; i < ship.getSize(); i++) {
-                ship.getPositions().add(new Position(letter, i));
+                ship.getShipParts().add(new ShipPart(new Position(letter, i)));
             }
 
             counter++;
@@ -47,7 +52,7 @@ public class GameControllerTest {
 
         boolean result = GameController.checkIsHit(ships, new Position(Letter.H, 1));
 
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -65,7 +70,7 @@ public class GameControllerTest {
         Ship ship = new Ship("TestShip", 3);
         boolean result = GameController.isShipValid(ship);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
     @Test
@@ -75,7 +80,55 @@ public class GameControllerTest {
 
         boolean result = GameController.isShipValid(ship);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
+    @Test
+    public void givenFleet_whenMissed_fleetIsNotDestroyed() {
+        final List<Ship> fleet = Arrays.asList(new Ship("ship1", 1, Arrays.asList(new Position(Letter.C, 5))));
+        GameController.checkIsHit(fleet, new Position(Letter.B, 1));
+
+        assertFalse(GameController.isFleetDestroyed(fleet));
+    }
+
+    @Test
+    public void givenSingleNodeFleet_whenShipIsHit_fleetIsDestroyed() {
+        final List<Ship> fleet = Arrays.asList(new Ship("ship1", 1, Arrays.asList(new Position(Letter.C, 5))));
+        GameController.checkIsHit(fleet, new Position(Letter.C, 5));
+
+        assertTrue(GameController.isFleetDestroyed(fleet));
+    }
+
+    @Test
+    public void givenMultipleSingleNodeFleet_whenAllAreHit_fleetIsDestroyed() {
+        final List<Ship> fleet = Arrays.asList(
+                new Ship("ship1", 1, Arrays.asList(new Position(Letter.C, 5))),
+                new Ship("ship2", 1, Arrays.asList(new Position(Letter.A, 2))));
+
+        assertFalse("fleet should not be destroyed at this time", GameController.isFleetDestroyed(fleet));
+        GameController.checkIsHit(fleet, new Position(Letter.C, 5));
+
+        assertFalse("fleet should not be destroyed at this time", GameController.isFleetDestroyed(fleet));
+        GameController.checkIsHit(fleet, new Position(Letter.A, 2));
+
+        assertTrue(GameController.isFleetDestroyed(fleet));
+    }
+
+    @Test
+    public void givenFleet_whenAllAreHit_fleetIsDestroyed() {
+        final List<Ship> fleet = Arrays.asList(
+                new Ship("ship1", 1, Arrays.asList(new Position(Letter.C, 5))),
+                new Ship("ship2", 2, Arrays.asList(new Position(Letter.A, 2), new Position(Letter.A, 3))));
+
+        assertFalse("fleet should not be destroyed at this time", GameController.isFleetDestroyed(fleet));
+        GameController.checkIsHit(fleet, new Position(Letter.C, 5));
+
+        assertFalse("fleet should not be destroyed at this time", GameController.isFleetDestroyed(fleet));
+        GameController.checkIsHit(fleet, new Position(Letter.A, 2));
+
+        assertFalse("fleet should not be destroyed at this time", GameController.isFleetDestroyed(fleet));
+        GameController.checkIsHit(fleet, new Position(Letter.A, 3));
+
+        assertTrue(GameController.isFleetDestroyed(fleet));
+    }
 }

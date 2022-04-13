@@ -14,6 +14,12 @@ rules
 - odevzdatelne uzivateli na hrani
   - change-log / release notes (pro usera co je noveho)
 
+# Running parameters
+To run in debug mode where all ships (yours/enemy) are placed single ship
+on each row starting at position 1 and the enemy shooting at all
+those positions in order, start in "debug" mode via setting env property.
+> export debug=true && java -jar console-app-1.0.0-SNAPSHOT.jar
+
 # Battleship Java
 
 A simple game of Battleship, written in Java code.
