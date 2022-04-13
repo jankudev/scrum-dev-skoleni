@@ -118,14 +118,24 @@ public class Main {
     }
 
     private static Position getInput(Scanner scanner, String text) {
-        for (int i = 0; i < 10; i++) {
+        int maxRetries = 10;
+        for (int i = 0; i < maxRetries; i++) {
+            console.println(text);
             String input = scanner.next();
             try {
-                console.println(text);
-                return parsePosition(input);
-            } catch (Exception e) {
+                if (parsePosition(input) != null) {return parsePosition(input);}
+                else {
+                    console.println(Color.RED.getColoredText("Given position is not on the map! Retries left: ")
+                            + (maxRetries - (i + 1)));
+                }
+            }
+            catch (IllegalArgumentException e) {
+                console.println(Color.RED.getColoredText("Given position is not on the map! Retries left: ")
+                        + (maxRetries - (i + 1)));}
+            catch (Exception e) {
                 console.println(Color.RED.getColoredText("Invalid input: ") + input);
             }
+
         }
 
         throw new RuntimeException("Max retries reached, exiting");
@@ -142,7 +152,17 @@ public class Main {
     protected static Position parsePosition(String input) {
         Letter letter = Letter.valueOf(input.toUpperCase().substring(0, 1));
         int number = Integer.parseInt(input.substring(1));
-        return new Position(letter, number);
+
+        if (notOutOfScope(letter, number)){
+            return new Position(letter, number);
+        }
+        else {
+            return null;
+        }
+    }
+
+    private static boolean notOutOfScope(Letter letter, int number) {
+        return (number < 9 & number > 0) & (letter.getIndex() < 9 & letter.getIndex() > 0);
     }
 
     private static Position getRandomPosition() {
