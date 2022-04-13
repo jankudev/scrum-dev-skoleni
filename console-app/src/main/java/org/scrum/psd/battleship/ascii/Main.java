@@ -13,6 +13,8 @@ public class Main {
     private static List<Ship> myFleet;
     protected static List<Ship> enemyFleet;
 
+    private static GameGridHistory yourMovesHistory;
+    private static GameGridHistory enemyMovesHistory;
     private static ColoredPrinter console;
 
     // set by env property "debug=true" (java -jar xyz.jar -Ddebug=true), used for fast startup
@@ -62,6 +64,20 @@ public class Main {
         console.println(Color.PURPLE.getColoredText("    \" \"\" \"\" \"\" \""));
     }
 
+    private static void printCanonWithHistoryGrid() {
+        console.println(Color.PURPLE.getColoredText("                  __     " + Color.WHITE.getColoredText(" your moves          enemy moves")));
+        console.println(Color.PURPLE.getColoredText("                 /  \\   " + Color.WHITE.getColoredText("  A B C D E F G H     A B C D E F G H")));
+        console.println(Color.PURPLE.getColoredText("           .-.  |    |  " + Color.WHITE.getColoredText("1 ") + yourMovesHistory.getRowAsString(1)) + Color.WHITE.getColoredText("   1 ") + enemyMovesHistory.getRowAsString(1));
+        console.println(Color.PURPLE.getColoredText("   *    _.-'  \\  \\__/   " + Color.WHITE.getColoredText("2 ") + yourMovesHistory.getRowAsString(2)) + Color.WHITE.getColoredText("   2 ") + enemyMovesHistory.getRowAsString(2));
+        console.println(Color.PURPLE.getColoredText("    \\.-'       \\        " + Color.WHITE.getColoredText("3 ") + yourMovesHistory.getRowAsString(3)) + Color.WHITE.getColoredText("   3 ") + enemyMovesHistory.getRowAsString(3));
+        console.println(Color.PURPLE.getColoredText("   /          _/        " + Color.WHITE.getColoredText("4 ") + yourMovesHistory.getRowAsString(4)) + Color.WHITE.getColoredText("   4 ") + enemyMovesHistory.getRowAsString(4));
+        console.println(Color.PURPLE.getColoredText("  |      _  /\" \"        " + Color.WHITE.getColoredText("5 ") + yourMovesHistory.getRowAsString(5)) + Color.WHITE.getColoredText("   5 ") + enemyMovesHistory.getRowAsString(5));
+        console.println(Color.PURPLE.getColoredText("  |     /_'             " + Color.WHITE.getColoredText("6 ") + yourMovesHistory.getRowAsString(6)) + Color.WHITE.getColoredText("   6 ") + enemyMovesHistory.getRowAsString(6));
+        console.println(Color.PURPLE.getColoredText("   \\    \\_/             " + Color.WHITE.getColoredText("7 ") + yourMovesHistory.getRowAsString(7)) + Color.WHITE.getColoredText("   7 ") + enemyMovesHistory.getRowAsString(7));
+        console.println(Color.PURPLE.getColoredText("    \" \"\" \"\" \"\" \"        " + Color.WHITE.getColoredText("8 ") + yourMovesHistory.getRowAsString(8)) + Color.WHITE.getColoredText("   8 ") + enemyMovesHistory.getRowAsString(8));
+    }
+
+
     private static void printBang() {
         console.println(Color.RED.getColoredText("                \\         .  ./"));
         console.println(Color.RED.getColoredText("              \\      .:\" \";'.:..\" \"   /"));
@@ -80,16 +96,20 @@ public class Main {
 
         do {
             // step: player shoots
-            printCanon();
+            printCanonWithHistoryGrid();
             printNewline();
             console.println("Player, it's your turn");
 
             Position position = getInput(scanner, "Enter coordinates for your shot :");
-            printSeparator();
+            printNewline();
             boolean isHit = GameController.checkIsHit(enemyFleet, position);
             if (isHit) {
                 beep();
                 printBang();
+
+                yourMovesHistory.markState(position, CellState.HIT);
+            } else {
+                yourMovesHistory.markState(position, CellState.MISS);
             }
 
             console.println(GameController.getHitMessage(isHit, true));
@@ -97,8 +117,6 @@ public class Main {
 
             printEnemyFleetState();
             printNewline();
-            console.println("It's the enemy's turn... Brace yourself for impact!");
-            printSeparator();
 
             // check gameover
             if (GameController.isFleetDestroyed(enemyFleet)) {
@@ -106,6 +124,7 @@ public class Main {
                 printSeparator();
                 System.exit(0);
             }
+            console.println("It's the enemy's turn... Brace yourself for impact!");
 
             // step: enemy shoots
             position = enemyShoots();
@@ -116,7 +135,10 @@ public class Main {
                 beep();
                 printBang();
 
+                enemyMovesHistory.markState(position, CellState.HIT);
                 printNewline();
+            } else {
+                enemyMovesHistory.markState(position, CellState.MISS);
             }
             console.println(String.format("Computer shoot in %s%s and %s", position.getColumn(), position.getRow(), GameController.getHitMessage(isHit, false)));
 
@@ -130,7 +152,9 @@ public class Main {
                 System.exit(0);
             }
 
+            printNewline();
             printSeparator();
+            printNewline();
         } while (true);
     }
 
@@ -194,7 +218,7 @@ public class Main {
     }
 
     private static void printSeparator() {
-        console.println(Color.YELLOW.getColoredText("##################################################"));
+        console.println(Color.YELLOW.getColoredText("####################################################################"));
     }
 
     private static void beep() {
@@ -225,6 +249,9 @@ public class Main {
             FixedPositionInitializeMyFleet();
             FixedPositionInitializeEnemyFleet();
         }
+
+        yourMovesHistory = new GameGridHistory();
+        enemyMovesHistory = new GameGridHistory();
     }
 
     private static void FixedPositionInitializeMyFleet() {
@@ -311,8 +338,11 @@ public class Main {
     }
 
     private static void printFleetState(List<Ship> fleet) {
+        Optional<Integer> maxNameLength = fleet.stream().map(x -> x.getName().length()).max(Integer::compare);
+        int length = maxNameLength.orElse(3);
+
         for (Ship ship : fleet) {
-            console.println("  " + ship.getName() + " (" + ship.getSize()+ ") -> " + formatShipState(ship));
+            console.println(" " + String.format("%1$" + length + "s", ship.getName()) + " (" + ship.getSize()+ ") -> " + formatShipState(ship));
         }
     }
 
@@ -367,6 +397,54 @@ class DebugFixedPositions {
     };
 }
 
-class GridHistory {
-    private List<Position> positions;
+/**
+ * Grid history to remember the moves and show player the current state of his attempts
+ */
+class GridCell {
+    public Position position;
+    public CellState state;
+
+    public GridCell(Position position, CellState state) {
+        this.position = position;
+        this.state = state;
+    }
+}
+
+enum CellState {
+    UNKNOWN(Color.WHITE.getColoredText(".")),
+    HIT(Color.RED.getColoredText("x")),
+    MISS(Color.BLUE.getColoredText("~"));
+
+    private String printSymbol;
+
+    CellState(String symbol) {
+        this.printSymbol = symbol;
+    }
+
+    public String getPrintSymbol() {
+        return printSymbol;
+    }
+}
+
+class GameGridHistory {
+    private List<GridCell> cells;
+
+    public GameGridHistory() {
+        cells = new ArrayList<>();
+        for (Letter l : Letter.values()) {
+            for (int i = 1; i<9; i++) {
+                cells.add(new GridCell(new Position(l, i), CellState.UNKNOWN));
+            }
+        }
+    }
+
+    public void markState(Position position, CellState state) {
+        cells.stream().filter(cell -> cell.position.equals(position)).findFirst().get().state = state;
+    }
+
+    public String getRowAsString(int row) {
+        return cells.stream().filter(cell -> cell.position.getRow() == row)
+                .map(cell -> cell.state.getPrintSymbol())
+                .collect(Collectors.joining(" "));
+    }
 }
