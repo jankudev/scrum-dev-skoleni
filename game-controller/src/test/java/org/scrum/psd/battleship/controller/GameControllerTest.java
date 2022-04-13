@@ -3,6 +3,7 @@ package org.scrum.psd.battleship.controller;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
@@ -123,6 +124,7 @@ public class GameControllerTest {
     }
 
     @Test
+    @RepeatedTest(10000)
     public void testGeneratingFleetPositions() {
         List<Ship> ships = GameController.initializeShips();
         GameController.generateShipsRandomPositions(ships, 8, 8);

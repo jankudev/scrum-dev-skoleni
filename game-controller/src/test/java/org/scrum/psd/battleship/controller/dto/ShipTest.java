@@ -8,8 +8,8 @@ class ShipTest {
 
     @Test
     void ship_nohit_isNotSunk() {
-        final Ship ship = new Ship("dutchman", 1);
-        ship.addShipPart("A1");
+        final Ship ship = new Ship("dutchman", 2);
+        ship.addShipPart("A1V");
         boolean wasHit = ship.hit(new Position(Letter.B, 2));
 
         assertFalse(wasHit);
@@ -18,9 +18,8 @@ class ShipTest {
 
     @Test
     void ship_partialHit_isNotSunk() {
-        final Ship ship = new Ship("dutchman", 1);
-        ship.addShipPart("A1");
-        ship.addShipPart("B1");
+        final Ship ship = new Ship("dutchman", 2);
+        ship.addShipPart("A1H");
         boolean wasHit = ship.hit(new Position(Letter.B, 1));
 
         assertTrue(wasHit);
@@ -29,9 +28,8 @@ class ShipTest {
 
     @Test
     void ship_fullyHit_isSunk() {
-        final Ship ship = new Ship("dutchman", 1);
-        ship.addShipPart("A1");
-        ship.addShipPart("B1");
+        final Ship ship = new Ship("dutchman", 2);
+        ship.addShipPart("A1H");
         boolean wasHit1 = ship.hit(new Position(Letter.A, 1));
         boolean wasHit2 = ship.hit(new Position(Letter.B, 1));
 

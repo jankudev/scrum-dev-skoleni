@@ -1,5 +1,7 @@
 package org.scrum.psd.battleship.controller.dto;
 
+import org.scrum.psd.battleship.controller.GameController;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,17 +32,14 @@ public class Ship {
     }
 
     public void addShipPart(String input) {
-        Letter letter = Letter.valueOf(input.toUpperCase().substring(0, 1));
-        int number = Integer.parseInt(input.substring(1));
-
-        addShipPart(new Position(letter, number));
+        addShipPart(GameController.parseShipPosition(input));
     }
 
-    public void addShipPart(Position position) {
-        if (shipParts == null) {
-            shipParts = new ArrayList<>();
-        }
-        shipParts.add(new ShipPart(position));
+    public void addShipPart(ShipPosition position) {
+        List<Position> shipPartPos = GameController.getShipPositions(position.getPosition(), position.isVertical(), this.size);
+        this.shipParts = shipPartPos.stream().map(ShipPart::new).collect(Collectors.toList());
+
+        //shipParts.add(new ShipPart(position.getPosition()));
     }
 
     public boolean isSunk() {

@@ -1,7 +1,9 @@
 package org.scrum.psd.battleship.controller.dto.debug;
 
+import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
+import org.scrum.psd.battleship.controller.dto.ShipPosition;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,8 +16,8 @@ import java.util.stream.Collectors;
  * - for fixed ships placement
  * - for fixed set of shoots (computer moves)
  */
-public class  DebugFixedPositions {
-    public static final String DEFAULT_FIXED_POSITIONS = "a1 a2 a3 a4 a5 c1 c2 c3 c4 e1 e2 e3 g1 g2 g3 e7 h7";
+public class DebugFixedPositions {
+    public static final String DEFAULT_FIXED_POSITIONS = "a1v c1v e1v g1v e7v";
     public static final String DEFAULT_MISSES = "a7 b6 c5 e4 h2";
 
     public final List<Position> positions;
@@ -36,27 +38,13 @@ public class  DebugFixedPositions {
         return this.iterator.next();
     }
 
-    public static DebugFixedPositions getDefaultFleetSetupPositions() {
-        return new DebugFixedPositions(
-                DEFAULT_FIXED_POSITIONS
-        );
+    public static List<ShipPosition> getDefaultFleetSetupPositions() {
+        return Arrays.stream(DEFAULT_FIXED_POSITIONS.split(" ")).map(GameController::parseShipPosition).collect(Collectors.toList());
     }
-
-    ;
-
-    public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandom() {
-        List<String> positions = Arrays.asList(DEFAULT_FIXED_POSITIONS.split(" "));
-        Collections.shuffle(positions);
-        return new DebugFixedPositions(String.join(" ", positions));
-    }
-
-    ;
 
     public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandomIncludingMisses() {
-        List<String> positions = Arrays.asList((DEFAULT_FIXED_POSITIONS + " " + DEFAULT_MISSES).split(" "));
+        List<String> positions = Arrays.asList((DEFAULT_FIXED_POSITIONS + " " + DEFAULT_MISSES).replaceAll("[hv]\\b", "").split(" "));
         Collections.shuffle(positions);
         return new DebugFixedPositions(String.join(" ", positions));
     }
-
-    ;
 }

@@ -6,8 +6,10 @@ import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.*;
 import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Scanner;
 
 public class Main {
     private static List<Ship> myFleet;
@@ -213,7 +215,22 @@ public class Main {
             console.println(text);
             String input = scanner.next();
             try {
-                return parsePosition(input);
+                return GameController.parsePosition(input);
+            } catch (Exception e) {
+                console.println(Color.RED.getColoredText("Invalid input: ") + input);
+            }
+        }
+
+        throw new RuntimeException("Max retries reached, exiting");
+    }
+
+
+    private static ShipPosition getInputForShip(Scanner scanner, String text) {
+        for (int i = 0; i < 10; i++) {
+            console.println(text);
+            String input = scanner.next();
+            try {
+                return GameController.parseShipPosition(input);
             } catch (Exception e) {
                 console.println(Color.RED.getColoredText("Invalid input: ") + input);
             }
@@ -229,14 +246,6 @@ public class Main {
     private static void beep() {
         console.print("\007");
     }
-
-    protected static Position parsePosition(String input) {
-        Letter letter = Letter.valueOf(input.toUpperCase().substring(0, 1));
-        int number = Integer.parseInt(input.substring(1));
-        return new Position(letter, number);
-    }
-
-
 
     private static void InitializeGame() {
         if (!debugMode) {
@@ -271,14 +280,14 @@ public class Main {
     /**
      * Placing ships in fleet in order on fixed positions each ship on single row (letter)
      * and columns starting from position 1
+     *
      * @param fleet
      */
     private static void placeShipsInFleetOnFixedPositions(List<Ship> fleet) {
-        DebugFixedPositions fixedPositions = DebugFixedPositions.getDefaultFleetSetupPositions();
+        Iterator<ShipPosition> fixedPositions = DebugFixedPositions.getDefaultFleetSetupPositions().iterator();
         for (Ship ship : fleet) {
-            for (int j = 0; j < ship.getSize(); j++) {
-                ship.addShipPart(fixedPositions.next());
-            }
+            ShipPosition position = fixedPositions.next();
+            ship.addShipPart(position);
         }
     }
 
@@ -291,10 +300,10 @@ public class Main {
         for (Ship ship : myFleet) {
             printNewline();
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
-            for (int i = 1; i <= ship.getSize(); i++) {
-                Position positionInput = getInput(scanner, String.format("Enter position %s of %s (i.e A3):", i, ship.getSize()));
-                ship.addShipPart(positionInput);
-            }
+
+            ShipPosition positionInput = getInputForShip(scanner, String.format("Enter start position for the %s (size: %s)", ship.getName(), ship.getSize()));
+            ship.addShipPart(positionInput);
+
         }
     }
 
@@ -304,13 +313,12 @@ public class Main {
     }
 
 
-
     private static void printFleetState(List<Ship> fleet) {
         Optional<Integer> maxNameLength = fleet.stream().map(x -> x.getName().length()).max(Integer::compare);
         int length = maxNameLength.orElse(3);
 
         for (Ship ship : fleet) {
-            console.println(" " + String.format("%1$" + length + "s", ship.getName()) + " (" + ship.getSize()+ ") -> " + formatShipState(ship));
+            console.println(" " + String.format("%1$" + length + "s", ship.getName()) + " (" + ship.getSize() + ") -> " + formatShipState(ship));
         }
     }
 

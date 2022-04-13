@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 
@@ -12,7 +13,7 @@ public class MainTest {
 
     @Test
     public void testParsePosition() {
-        Position actual = Main.parsePosition("A1");
+        Position actual = GameController.parsePosition("A1");
         Position expected = new Position(Letter.A, 1);
         Assertions.assertEquals(expected, actual);
     }
@@ -22,7 +23,7 @@ public class MainTest {
         //given
         Position expected = new Position(Letter.B, 1);
         //when
-        Position actual = Main.parsePosition("B1");
+        Position actual = GameController.parsePosition("B1");
         //then
         Assertions.assertEquals(expected, actual);
     }
