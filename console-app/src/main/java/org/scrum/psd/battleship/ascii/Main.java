@@ -186,11 +186,17 @@ public class Main {
 
     private static void printPlayerLooses() {
         printNewline();
-        console.println(Color.RED.getColoredText(" ░█▀▀ ░█▀█ ░█ ░█▀▀ ░░█▀▀ ░█▀█ ░█ ░█"));
-        console.println(Color.RED.getColoredText(" ░█▀▀ ░█▀▀ ░█ ░█ ░░░░█▀▀ ░█▀█ ░█ ░█"));
-        console.println(Color.RED.getColoredText(" ░▀▀▀ ░▀ ░░░▀ ░▀▀▀ ░░▀ ░░░▀░▀ ░▀ ░▀▀▀"));
+        console.println(Color.RED.getColoredText("   ,    ,    /\\   /\\"));
+        console.println(Color.RED.getColoredText("  /( /\\ )\\  _\\ \\_/ /_"));
+        console.println(Color.RED.getColoredText("  |\\_||_/| < \\_   _/ >"));
+        console.println(Color.RED.getColoredText("  \\______/  \\|0   0|/"));
+        console.println(Color.RED.getColoredText("    _\\/_   _(_  ^  _)_"));
+        console.println(Color.RED.getColoredText("   ( () ) /`\\|V\"\"\"V|/`\\"));
+        console.println(Color.RED.getColoredText("     {}   \\  \\_____/  /"));
+        console.println(Color.RED.getColoredText("     ()   /\\   )=(   /\\"));
+        console.println(Color.RED.getColoredText("     {}  /  \\_/\\=/\\_/  \\"));
         printNewline();
-        console.println(Color.RED.getColoredText("            YOU LOOSE !!!"));
+        console.println(Color.RED.getColoredText("        YOU LOOSE !!!"));
         printNewline();
     }
 

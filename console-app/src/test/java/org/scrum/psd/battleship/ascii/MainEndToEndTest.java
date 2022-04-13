@@ -10,6 +10,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 import org.junit.contrib.java.lang.system.internal.CheckExitCalled;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,15 +62,7 @@ public class MainEndToEndTest {
         exit.expectSystemExitWithStatus(0);
 
         try {
-            gameInput.provideLines(
-                    "e5",                           // initial miss
-                    "a1", "a2", "a3", "a4", "a5",   // sink Aircraft Carrier
-                    "b1", "b2", "b3", "b4",         // sink Battleship
-                    "c7", "c8",                     // mid-game miss
-                    "c1", "c2", "c3",               // sink Submarine
-                    "d1", "d2", "d3",               // sink Destroyer
-                    "e1", "e2"                      // sink Patrol Ship
-            );
+            gameInput.provideLines(DebugFixedPositions.DEFAULT_FIXED_POSITIONS.split(" "));
 
             Main.main(new String[]{});
         } catch(CheckExitCalled e) {
@@ -85,15 +78,10 @@ public class MainEndToEndTest {
 
         try {
             gameInput.provideLines(
-                    "e6",                           // miss
-                    "a1", "a2", "a3", "a4", "a5",   // sink Aircraft Carrier
-                    "b5", "c7",                     // misses
-                    "b1", "b2", "b3", "b4",         // sink Battleship
-                    "c1", "c2", "c3",               // sink Submarine
-                    "a8", "b6",                     // misses
-                    "d1", "d2", "d3",               // sink Destroyer
-                    "e1", "e5"                      // almost sink Patrol Ship (miss and let computer win)
-            );
+                    String.join(" ",
+                            "h8 h7 h2",
+                            DebugFixedPositions.DEFAULT_MISSES,
+                            DebugFixedPositions.DEFAULT_FIXED_POSITIONS).split(" "));
 
             Main.main(new String[]{});
         } catch(CheckExitCalled e) {

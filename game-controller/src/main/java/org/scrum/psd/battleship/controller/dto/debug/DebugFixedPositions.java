@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
  * - for fixed ships placement
  * - for fixed set of shoots (computer moves)
  */
-public class DebugFixedPositions {
-    public static final String DEFAULT_FIXED_POSITIONS = "a1 a2 a3 a4 a5 b1 b2 b3 b4 c1 c2 c3 d1 d2 d3 e1 e2";
-    public static final String DEFAULT_MISSES = "a7 b6 c5 e3 h2";
+public class  DebugFixedPositions {
+    public static final String DEFAULT_FIXED_POSITIONS = "a1 a2 a3 a4 a5 c1 c2 c3 c4 e1 e2 e3 g1 g2 g3 e7 h7";
+    public static final String DEFAULT_MISSES = "a7 b6 c5 e4 h2";
 
     public final List<Position> positions;
     private Iterator<Position> iterator;
