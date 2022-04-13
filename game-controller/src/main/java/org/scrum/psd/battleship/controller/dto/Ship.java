@@ -1,6 +1,7 @@
 package org.scrum.psd.battleship.controller.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,5 +74,11 @@ public class Ship {
 
     public List<ShipPart> getShipParts() {
         return shipParts;
+    }
+
+    public List<Position> getPositions() {
+        return Collections.unmodifiableList(
+                this.shipParts.stream().map(x -> x.getPosition()).collect(Collectors.toList())
+        );
     }
 }

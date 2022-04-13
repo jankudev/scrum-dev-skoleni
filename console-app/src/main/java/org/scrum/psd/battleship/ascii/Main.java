@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-
     private static List<Ship> myFleet;
     protected static List<Ship> enemyFleet;
 
@@ -23,7 +22,6 @@ public class Main {
     private static final DebugFixedPositions debugEnemyShootsOnAllFixedPositions = DebugFixedPositions.getDefaultFleetSetupPositionsAtRandomIncludingMisses();
 
     public static void main(String[] args) {
-
         console = new ColoredPrinter.Builder(1, false).background(Ansi.BColor.BLACK).foreground(Ansi.FColor.WHITE).build();
 
         console.setForegroundColor(Ansi.FColor.MAGENTA);
@@ -60,7 +58,7 @@ public class Main {
         console.println(Color.PURPLE.getColoredText("    \\.-'       \\"));
         console.println(Color.PURPLE.getColoredText("   /          _/"));
         console.println(Color.PURPLE.getColoredText("  |      _  /\" \""));
-        console.println(Color.PURPLE.getColoredText("  |     /_'"));
+        console.println(Color.PURPLE.getColoredText("  |     /_\'"));
         console.println(Color.PURPLE.getColoredText("   \\    \\_/"));
         console.println(Color.PURPLE.getColoredText("    \" \"\" \"\" \"\" \""));
     }
@@ -161,7 +159,7 @@ public class Main {
 
     private static Position enemyShoots() {
         if (!debugMode) {
-            return getRandomPosition();
+            return GameController.getRandomPosition(GameController.boardWidth, GameController.boardHeight);
         }
         return debugEnemyShootsOnAllFixedPositions.next();
     }
@@ -238,15 +236,7 @@ public class Main {
         return new Position(letter, number);
     }
 
-    private static Position getRandomPosition() {
-        int rows = 8;
-        int lines = 8;
-        Random random = new Random();
-        Letter letter = Letter.values()[random.nextInt(lines)];
-        int number = random.nextInt(rows);
-        Position position = new Position(letter, number);
-        return position;
-    }
+
 
     private static void InitializeGame() {
         if (!debugMode) {
@@ -310,39 +300,10 @@ public class Main {
 
     protected static void InitializeEnemyFleet() {
         enemyFleet = GameController.initializeShips();
-
-        for (Ship ship : enemyFleet) {
-            boolean canBeGenerated = false;
-            do {
-                Position startPoint = getRandomPosition();
-                boolean isVertical = new Random().nextBoolean();
-
-                boolean canContinue = (isVertical && (startPoint.getRow() + ship.getSize()) <= 8) ||
-                        (!isVertical & (startPoint.getColumn().getIndex() + ship.getSize()) <= 8);
-
-                if (canContinue) {
-                    List<Position> ganeratedFields = new ArrayList<>();
-                    if (isVertical) {
-                        for (int i = 0; i < ship.getSize(); i++) {
-                            ganeratedFields.add(new Position(startPoint.getColumn(), startPoint.getRow() + i));
-                        }
-                    } else {
-                        for (int i = 0; i < ship.getSize(); i++) {
-                            ganeratedFields.add(new Position(Letter.getByIndex(startPoint.getColumn().getIndex() + i), startPoint.getRow()));
-                        }
-                    }
-
-                    canBeGenerated = ganeratedFields.stream()
-                            .noneMatch(shipPosition -> enemyFleet.stream()
-                                    .map(s -> s.getShipParts().stream().map(ShipPart::getPosition).collect(Collectors.toList()))
-                                    .collect(Collectors.toList()).contains(shipPosition));
-
-                    if (canBeGenerated)
-                        ship.getShipParts().addAll(ganeratedFields.stream().map(ShipPart::new).collect(Collectors.toList()));
-                }
-            } while (!canBeGenerated);
-        }
+        GameController.generateShipsRandomPositions(enemyFleet, GameController.boardWidth, GameController.boardHeight);
     }
+
+
 
     private static void printFleetState(List<Ship> fleet) {
         Optional<Integer> maxNameLength = fleet.stream().map(x -> x.getName().length()).max(Integer::compare);

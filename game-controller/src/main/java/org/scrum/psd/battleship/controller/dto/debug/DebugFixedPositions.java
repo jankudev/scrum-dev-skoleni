@@ -24,7 +24,7 @@ public class  DebugFixedPositions {
     public DebugFixedPositions(String positions) {
         this.positions = Collections.unmodifiableList(
                 Arrays.stream(positions.split(" "))
-                        .map(x -> new Position(Letter.getByIndex(x.charAt(0) - 'a'), Integer.parseInt(x.substring(1))))
+                        .map(x -> new Position(Letter.values()[x.charAt(0) - 'a'], Integer.parseInt(x.substring(1))))
                         .collect(Collectors.toList()));
         this.iterator = this.positions.iterator();
     }

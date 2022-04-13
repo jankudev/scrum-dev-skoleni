@@ -2,6 +2,7 @@ package org.scrum.psd.battleship.controller;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
@@ -10,6 +11,7 @@ import org.scrum.psd.battleship.controller.dto.ShipPart;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -112,6 +114,31 @@ public class GameControllerTest {
         GameController.checkIsHit(fleet, new Position(Letter.A, 2));
 
         assertTrue(GameController.isFleetDestroyed(fleet));
+    }
+
+    @Test
+    public void testInitializingFleet() {
+        List<Ship> ships = GameController.initializeShips();
+        Assertions.assertEquals(5, ships.size());
+    }
+
+    @Test
+    public void testGeneratingFleetPositions() {
+        List<Ship> ships = GameController.initializeShips();
+        GameController.generateShipsRandomPositions(ships, 8, 8);
+        Assertions.assertEquals(
+            ships.stream().mapToLong(x->x.getPositions().size()).sum(),
+            ships.stream().flatMap(x->x.getPositions().stream()).distinct().count(),
+            "All positions should be unique.");
+    }
+
+    @Test
+    public void validatingGenerateRandomPositions_alwaysInRange() {
+        for (int i = 0; i<100000; i++) {
+            final Position pos = GameController.getRandomPosition(GameController.boardWidth, GameController.boardHeight);
+            assertTrue(pos.getColumn().name().toUpperCase().matches("[A-H]"));
+            assertTrue(pos.getRow() >= 1 && pos.getRow() <= 8);
+        }
     }
 
     @Test
