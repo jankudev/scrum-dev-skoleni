@@ -1,14 +1,15 @@
 package org.scrum.psd.battleship.controller;
 
-import org.scrum.psd.battleship.controller.dto.Color;
-import org.scrum.psd.battleship.controller.dto.Letter;
-import org.scrum.psd.battleship.controller.dto.Position;
-import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameController {
+
+    public static final int boardWidth = Letter.values().length;
+    public static final int boardHeight = 8;
+
     public static boolean checkIsHit(Collection<Ship> ships, Position shot) {
         if (ships == null) {
             throw new IllegalArgumentException("ships is null");
@@ -46,7 +47,7 @@ public class GameController {
     public static Position getRandomPosition(int lines, int rows) {
         Random random = new Random();
         Letter letter = Letter.values()[random.nextInt(lines)];
-        int number = random.nextInt(rows);
+        int number = random.nextInt(rows) + 1; // ordering of positions starts from 1
         return new Position(letter, number);
     }
 
@@ -73,13 +74,13 @@ public class GameController {
                     }
 
                     List<Position> alreadyGeneratedFleetPositions = ships.stream()
-                            .flatMap(x -> x.getPositions().stream())
+                            .flatMap(x -> x.getShipParts().stream().map(ShipPart::getPosition).collect(Collectors.toList()).stream())
                             .collect(Collectors.toList());
 
                     canBeGenerated = ganeratedFields.stream().noneMatch(alreadyGeneratedFleetPositions::contains);
 
                     if (canBeGenerated)
-                        ship.getPositions().addAll(ganeratedFields);
+                        ship.getShipParts().addAll(ganeratedFields.stream().map(ShipPart::new).collect(Collectors.toList()));
                 }
             } while (!canBeGenerated);
         }
@@ -87,6 +88,10 @@ public class GameController {
     }
 
     public static boolean isShipValid(Ship ship) {
-        return ship.getPositions().size() == ship.getSize();
+        return ship.getShipParts().size() == ship.getSize();
+    }
+
+    public static boolean isFleetDestroyed(List<Ship> fleet) {
+        return fleet.stream().allMatch(ship -> ship.isSunk());
     }
 }

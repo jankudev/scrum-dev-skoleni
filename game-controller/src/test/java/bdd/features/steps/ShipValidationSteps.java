@@ -8,18 +8,19 @@ import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.Letter;
 import org.scrum.psd.battleship.controller.dto.Position;
 import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.ShipPart;
 
 public class ShipValidationSteps {
     private Ship ship;
     private boolean validationResult;
 
     @Given("^I have a (.*?) ship with (.*?) positions$")
-    public void i_have_a_size_ship_with_positions(int size, int positions) throws Throwable {
+    public void i_have_a_size_ship_with_ship_parts_with_positions(int size, int positions) throws Throwable {
         ship = new Ship();
 
         ship.setSize(size);
         for (int i = 0; i < positions; i++) {
-            ship.getPositions().add(new Position(Letter.A, i));
+            ship.getShipParts().add(new ShipPart(new Position(Letter.A, i)));
         }
     }
 

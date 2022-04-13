@@ -2,10 +2,18 @@ package org.scrum.psd.battleship.ascii;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
+import org.junit.contrib.java.lang.system.internal.CheckExitCalled;
+import org.scrum.psd.battleship.controller.dto.Ship;
+import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
@@ -15,26 +23,70 @@ public class MainEndToEndTest {
     public static final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
     @ClassRule
     public static final TextFromStandardInputStream gameInput = emptyStandardInputStream();
+    @ClassRule
+    public static final EnvironmentVariables environmentVariables = new EnvironmentVariables();
+    @ClassRule
+    public static final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
     public void testPlayGameShotHits() {
+        environmentVariables.set("debug", "true"); // fixed placement ships
+
         try {
-            gameInput.provideLines("a1", "a2", "a3", "a4", "a5", "b1", "b2", "b3", "b4", "c1", "c2", "c3", "d1", "d2", "d3", "e1", "e2");
+            gameInput.provideLines("b4");
 
             Main.main(new String[]{});
         } catch(NoSuchElementException e) {
             Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
+            Assert.assertTrue(systemOutRule.getLog().contains("HIT!"));
         }
     }
 
     @Test
     public void testPlayGameShotMisses() {
+        environmentVariables.set("debug", "true"); // fixed placement ships
+
         try {
-            gameInput.provideLines("a1", "a2", "a3", "a4", "a5", "b1", "b2", "b3", "b4", "c1", "c2", "c3", "d1", "d2", "d3", "e1", "e2");
+            gameInput.provideLines("e4");
 
             Main.main(new String[]{});
         } catch(NoSuchElementException e) {
             Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
+            Assert.assertTrue(systemOutRule.getLog().contains("Miss"));
+        }
+    }
+
+    @Test
+    public void testPlayGameTestingAllPositions_playerWins() {
+        environmentVariables.set("debug", "true"); // fixed placement ships
+        exit.expectSystemExitWithStatus(0);
+
+        try {
+            gameInput.provideLines(DebugFixedPositions.DEFAULT_FIXED_POSITIONS.split(" "));
+
+            Main.main(new String[]{});
+        } catch(CheckExitCalled e) {
+            Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
+            Assert.assertTrue(systemOutRule.getLog().contains("YOU WIN THE GAME !!!"));
+        }
+    }
+
+    @Test
+    public void testPlayGameTestingAllPositions_playerLooses() {
+        environmentVariables.set("debug", "true"); // fixed placement ships
+        exit.expectSystemExitWithStatus(0);
+
+        try {
+            gameInput.provideLines(
+                    String.join(" ",
+                            "h8 h7 h2",
+                            DebugFixedPositions.DEFAULT_MISSES,
+                            DebugFixedPositions.DEFAULT_FIXED_POSITIONS).split(" "));
+
+            Main.main(new String[]{});
+        } catch(CheckExitCalled e) {
+            Assert.assertTrue(systemOutRule.getLog().contains("Welcome to Battleship"));
+            Assert.assertTrue(systemOutRule.getLog().contains("YOU LOOSE !!!"));
         }
     }
 }

@@ -1,17 +1,19 @@
 package org.scrum.psd.battleship.controller.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Ship {
-    private boolean isPlaced;
     private String name;
     private int size;
 
-    private List<Position> positions;
+    private List<ShipPart> shipParts;
 
     public Ship() {
-        this.positions = new ArrayList<>();
+        this.shipParts = new ArrayList<>();
     }
 
     public Ship(String name, int size) {
@@ -24,44 +26,34 @@ public class Ship {
     public Ship(String name, int size, List<Position> positions) {
         this(name, size);
 
-        this.positions = positions;
+        this.shipParts = positions.stream().map(p -> new ShipPart(p)).collect(Collectors.toList());
     }
 
-    public void addPosition(String input) {
+    public void addShipPart(String input) {
         Letter letter = Letter.valueOf(input.toUpperCase().substring(0, 1));
         int number = Integer.parseInt(input.substring(1));
 
-        addPosition(new Position(letter, number));
+        addShipPart(new Position(letter, number));
     }
 
-    public void addPosition(Position position) {
-        if (positions == null) {
-            positions = new ArrayList<>();
+    public void addShipPart(Position position) {
+        if (shipParts == null) {
+            shipParts = new ArrayList<>();
         }
-        positions.add(position);
+        shipParts.add(new ShipPart(position));
     }
 
     public boolean isSunk() {
-        return positions.stream().allMatch(x -> x != null && x.isHit());
+        return shipParts.stream().allMatch(x -> x != null && x.isHit());
     }
 
     public boolean hit(Position position) {
-        int idx = this.positions.indexOf(position);
-        if (idx >= 0) {
-            this.positions.get(idx).setHit(true);
+        final Optional<ShipPart> hittedPart = this.shipParts.stream().filter(part -> position.equals(part.getPosition())).findFirst();
+        if (hittedPart.isPresent()) {
+            hittedPart.get().markHit();
             return true;
         }
         return false;
-    }
-
-    // TODO: property change listener implementieren
-
-    public boolean isPlaced() {
-        return isPlaced;
-    }
-
-    public void setPlaced(boolean placed) {
-        isPlaced = placed;
     }
 
     public String getName() {
@@ -72,20 +64,21 @@ public class Ship {
         this.name = name;
     }
 
-    public List<Position> getPositions() {
-        return this.positions;
-    }
-
-    public void setPositions(List<Position> positions) {
-        this.positions = positions;
-    }
-
-
     public int getSize() {
         return size;
     }
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public List<ShipPart> getShipParts() {
+        return shipParts;
+    }
+
+    public List<Position> getPositions() {
+        return Collections.unmodifiableList(
+                this.shipParts.stream().map(x -> x.getPosition()).collect(Collectors.toList())
+        );
     }
 }
