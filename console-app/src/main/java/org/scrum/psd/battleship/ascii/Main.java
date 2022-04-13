@@ -4,6 +4,7 @@ import com.diogonunes.jcdp.color.ColoredPrinter;
 import com.diogonunes.jcdp.color.api.Ansi;
 import org.scrum.psd.battleship.controller.GameController;
 import org.scrum.psd.battleship.controller.dto.*;
+import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -351,100 +352,3 @@ public class Main {
     }
 }
 
-/**
- * Create a list of fixed positions for convenience of debugging
- * - for fixed ships placement
- * - for fixed set of shoots (computer moves)
- */
-class DebugFixedPositions {
-    public static final String DEFAULT_FIXED_POSITIONS = "a1 a2 a3 a4 a5 b1 b2 b3 b4 c1 c2 c3 d1 d2 d3 e1 e2";
-    public static final String DEFAULT_MISSES = "a7 b6 c5 e3 h2";
-
-    public final List<Position> positions;
-    private Iterator<Position> iterator;
-
-    public DebugFixedPositions(String positions) {
-        this.positions = Collections.unmodifiableList(
-                Arrays.stream(positions.split(" "))
-                .map(x -> new Position(Letter.getByIndex(x.charAt(0)-'a'), Integer.parseInt(x.substring(1))))
-                .collect(Collectors.toList()));
-        this.iterator = this.positions.iterator();
-    }
-
-    public Position next() {
-        if (!this.iterator.hasNext()) {
-            this.iterator = this.positions.iterator();
-        }
-        return this.iterator.next();
-    }
-
-    public static DebugFixedPositions getDefaultFleetSetupPositions() {
-        return new DebugFixedPositions(
-                DEFAULT_FIXED_POSITIONS
-        );
-    };
-
-    public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandom() {
-        List<String> positions = Arrays.asList(DEFAULT_FIXED_POSITIONS.split(" "));
-        Collections.shuffle(positions);
-        return new DebugFixedPositions(String.join(" ", positions));
-    };
-
-    public static DebugFixedPositions getDefaultFleetSetupPositionsAtRandomIncludingMisses() {
-        List<String> positions = Arrays.asList((DEFAULT_FIXED_POSITIONS + " " + DEFAULT_MISSES).split(" "));
-        Collections.shuffle(positions);
-        return new DebugFixedPositions(String.join(" ", positions));
-    };
-}
-
-/**
- * Grid history to remember the moves and show player the current state of his attempts
- */
-class GridCell {
-    public Position position;
-    public CellState state;
-
-    public GridCell(Position position, CellState state) {
-        this.position = position;
-        this.state = state;
-    }
-}
-
-enum CellState {
-    UNKNOWN(Color.WHITE.getColoredText(".")),
-    HIT(Color.RED.getColoredText("x")),
-    MISS(Color.BLUE.getColoredText("~"));
-
-    private String printSymbol;
-
-    CellState(String symbol) {
-        this.printSymbol = symbol;
-    }
-
-    public String getPrintSymbol() {
-        return printSymbol;
-    }
-}
-
-class GameGridHistory {
-    private List<GridCell> cells;
-
-    public GameGridHistory() {
-        cells = new ArrayList<>();
-        for (Letter l : Letter.values()) {
-            for (int i = 1; i<9; i++) {
-                cells.add(new GridCell(new Position(l, i), CellState.UNKNOWN));
-            }
-        }
-    }
-
-    public void markState(Position position, CellState state) {
-        cells.stream().filter(cell -> cell.position.equals(position)).findFirst().get().state = state;
-    }
-
-    public String getRowAsString(int row) {
-        return cells.stream().filter(cell -> cell.position.getRow() == row)
-                .map(cell -> cell.state.getPrintSymbol())
-                .collect(Collectors.joining(" "));
-    }
-}
