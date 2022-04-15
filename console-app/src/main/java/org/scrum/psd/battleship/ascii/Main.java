@@ -3,6 +3,7 @@ package org.scrum.psd.battleship.ascii;
 import com.diogonunes.jcdp.color.ColoredPrinter;
 import com.diogonunes.jcdp.color.api.Ansi;
 import org.scrum.psd.battleship.controller.GameController;
+import org.scrum.psd.battleship.controller.Validator;
 import org.scrum.psd.battleship.controller.dto.*;
 import org.scrum.psd.battleship.controller.dto.debug.DebugFixedPositions;
 
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static List<Ship> myFleet;
@@ -225,12 +227,19 @@ public class Main {
     }
 
 
-    private static ShipPosition getInputForShip(Scanner scanner, String text) {
+    private static ShipPosition getInputForShip(Scanner scanner, String text, int size) {
+
+        List<Position> taken = Main.myFleet.stream().flatMap(x -> x.getPositions().stream()).collect(Collectors.toList());
         for (int i = 0; i < 10; i++) {
             console.println(text);
             String input = scanner.next();
             try {
-                return GameController.parseShipPosition(input);
+                ShipPosition shipPosition = GameController.parseShipPosition(input);
+                List<Position> shipPositions = GameController.getShipPositions(shipPosition.getPosition(), shipPosition.isVertical(), size);
+                if (!Validator.isValidShipPlacement(shipPositions, taken)) {
+                    throw new RuntimeException("CONFLICT");
+                }
+                return shipPosition;
             } catch (Exception e) {
                 console.println(Color.RED.getColoredText("Invalid input: ") + input);
             }
@@ -301,7 +310,7 @@ public class Main {
             printNewline();
             console.println(String.format("Please enter the positions for the %s (size: %s)", ship.getName(), ship.getSize()));
 
-            ShipPosition positionInput = getInputForShip(scanner, String.format("Enter start position for the %s (size: %s)", ship.getName(), ship.getSize()));
+            ShipPosition positionInput = getInputForShip(scanner, String.format("Enter start position for the %s (size: %s)", ship.getName(), ship.getSize()),  ship.getSize());
             ship.addShipPart(positionInput);
 
         }
